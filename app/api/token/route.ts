@@ -27,6 +27,7 @@ export async function POST(request: Request) {
     const contract = new ethers.Contract(tokenAddress, abi, wallet)
 
     const { address } = await request.json()
+    console.log('Distributing tokens to:', address)
     const amount = ethers.parseUnits('1', 18) // 5 tokens with 18 decimals
 
     const tx = await contract.transfer(address, amount)

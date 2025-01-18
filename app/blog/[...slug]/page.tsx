@@ -13,6 +13,7 @@ import PostBanner from '@/layouts/PostBanner'
 import { Metadata } from 'next'
 import siteMetadata from '@/data/siteMetadata'
 import { notFound } from 'next/navigation'
+import RewardsCalculator from '@/components/rewards/RewardsCalculator'
 
 const defaultLayout = 'PostLayout'
 const layouts = {
@@ -114,6 +115,7 @@ export default async function Page(props: { params: Promise<{ slug: string[] }> 
       />
       <Layout content={mainContent} authorDetails={authorDetails} next={next} prev={prev}>
         <MDXLayoutRenderer code={post.body.code} components={components} toc={post.toc} />
+        <RewardsCalculator />
       </Layout>
     </>
   )

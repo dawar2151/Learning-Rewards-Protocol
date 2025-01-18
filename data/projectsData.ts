@@ -7,20 +7,16 @@ interface Project {
 
 const projectsData: Project[] = [
   {
-    title: 'A Search Engine',
-    description: `What if you could look up any information in the world? Webpages, images, videos
-    and more. Google has many features to help you find exactly what you're looking
-    for.`,
+    title: 'A Token Bulk Sender',
+    description: `A tool that allow users to bulk send tokens in few minutes with low fees.`,
     imgSrc: '/static/images/google.png',
-    href: 'https://www.google.com',
+    href: 'https://www.bulksendtokenz.xyz',
   },
   {
-    title: 'The Time Machine',
-    description: `Imagine being able to travel back in time or to the future. Simple turn the knob
-    to the desired date and press "Go". No more worrying about lost keys or
-    forgotten headphones with this simple yet affordable solution.`,
+    title: 'Ethereum Wallet',
+    description: `A simple Ethereum wallet that allow users to send, receive, swap and airdrop tokens.`,
     imgSrc: '/static/images/time-machine.jpg',
-    href: '/blog/the-time-machine',
+    href: 'https://codecanyon.net/item/xwallet-an-airdrop-ethereum-wallet/50663324',
   },
 ]
 

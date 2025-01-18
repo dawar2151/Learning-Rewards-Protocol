@@ -1,0 +1,205 @@
+---
+title: How to build ethereum wallet?
+date: '2025-01-15'
+tags: ['ethereum', 'wallet', 'web3']
+draft: false
+summary: 'Building an Ethereum Wallet App with Expo and TypeScript.'
+---
+
+## Building an Ethereum Wallet App with Expo and TypeScript
+
+In this guide, we'll walk through the creation of an Ethereum wallet app using Expo, TypeScript, and the `ethers.js` library. We'll focus on generating a mnemonic, accessing an Ethereum address, and checking balances from the blockchain, inspired by the **X-Wallet** example, which leverages **Domain-Driven Design (DDD)** principles.
+
+## Understanding Ethereum Wallets
+
+Ethereum wallets serve as gateways to interact with the Ethereum blockchain, allowing users to manage their Ether (ETH) and other tokens. They come in various forms:
+
+- **Hot Wallets**: These are software or online wallets (like MetaMask) that offer convenience at the cost of security.
+- **Cold Wallets**: Physical or hardware wallets (like Ledger or Trezor) provide enhanced security since they are not connected to the internet when not in use.
+
+### Key Concepts:
+- **Private Key**: Used to sign transactions and prove ownership of cryptocurrencies.
+- **Public Key**: Generated from the private key, used for receiving ETH.
+- **Address**: Derived from the public key, an address where ETH can be sent.
+
+## 🛠 Prerequisites and Setup
+
+### Software Requirements:
+- **Node.js**: Installed on your development machine.
+- **Expo CLI**: Install globally via `npm install -g expo-cli`.
+- **React Native**: Familiarity is beneficial, though not mandatory for this guide.
+- **TypeScript**: Ensure your Expo project supports TypeScript.
+
+### Installation Commands:
+
+```bash
+expo init ethereum-wallet-app --template expo-template-blank-typescript
+cd ethereum-wallet-app
+npm install ethers react-native-get-random-values @ethersproject/shims @dawar2151/bip39-expo
+```
+
+🚀 Step 1: Initialize Your Expo Project
+Begin by setting up a new Expo project with TypeScript:
+
+bash
+expo init ethereum-wallet-app --template expo-template-blank-typescript
+cd ethereum-wallet-app
+expo start
+
+🔐 Step 2: Wallet Management Services
+Create WalletService.ts for handling wallet operations:
+
+```typescript
+import 'react-native-get-random-values';
+import '@ethersproject/shims';
+import { Wallet, JsonRpcProvider, Contract, BigNumberish } from 'ethers';
+import { hdkey } from 'ethereumjs-wallet';
+import Bip39 from '@dawar2151/bip39-expo';
+import { ERC20_ABI, PATH_DERIVE } from '@x/global/config/constants'; // Assuming these constants exist
+import { NETWORKS, ANKR_KEY, INFURA_SECRET } from '@/global/constants'; // Assuming these are defined elsewhere
+import { type Token } from '@/domain/tickers/models/token'; // Assuming this type is defined
+import { type Network } from '@/global/types.constants'; // Assuming this type is defined
+
+// Generate a new mnemonic
+export const generateNewMnemonic = async (): Promise<string> => Bip39.generateMnemonic();
+
+// Derive wallet from mnemonic
+export async function getWallet(phrase: string, currentNetwork: Network): Promise<Wallet> {
+  const seed = await Bip39.mnemonicToSeed(phrase);
+  const hdwallet = hdkey.fromMasterSeed(seed);
+  const wallet = hdwallet.derivePath(PATH_DERIVE).getWallet();
+  return new Wallet(wallet.getPrivateKeyString(), getProvider(currentNetwork));
+}
+
+// Fetch native token balance
+export const getNativeTokenBalance = async (
+  currentNetwork: Network,
+  account: string
+): Promise<BigNumberish> => {
+  const provider = getProvider(currentNetwork);
+  return provider.getBalance(account);
+};
+
+// Fetch ERC20 token balance
+export const getTokenBalance = async (
+  currentNetwork: Network,
+  tokenAddress: string,
+  account: string
+): Promise<BigNumberish> => {
+  const provider = getProvider(currentNetwork);
+  const contract = new Contract(tokenAddress, ERC20_ABI, provider);
+  return contract.balanceOf(account);
+};
+
+// Select provider based on network
+export function getProvider(currentNetwork: Network = 'sepolia'): JsonRpcProvider {
+  switch (currentNetwork) {
+    case NETWORKS.bsc:
+      return new JsonRpcProvider(`https://rpc.ankr.com/bsc/${ANKR_KEY}`);
+    case NETWORKS.base:
+      return new JsonRpcProvider(`https://rpc.ankr.com/base/${ANKR_KEY}`);
+    default:
+      return new JsonRpcProvider(`https://${currentNetwork}.infura.io/v3/${INFURA_SECRET}`);
+  }
+}
+
+// Get balance for supported tokens
+export async function getBalance(
+  tokenId: string,
+  supportedTokens: { [key: string]: Token },
+  currentNetwork: Network,
+  currentAddress: string
+): Promise<BigNumberish> {
+  const token = supportedTokens[tokenId];
+  if (token.isNative) {
+    return getNativeTokenBalance(currentNetwork, currentAddress);
+  } else {
+    return getTokenBalance(currentNetwork, token.address, currentAddress);
+  }
+}
+```
+📲 Step 3: Crafting the User Interface
+Update Wallet.tsx for basic wallet functionalities:
+
+```typescript
+import React from 'react';
+import { StyleSheet, View } from 'react-native';
+import XButton from '@x/global/components/X/XButton';
+import { useSelector, useDispatch } from 'react-redux';
+import { generatePhrase, setUpWallet } from '@x/wallets/XReducer';
+import { removeValue, saveValue } from '../../../infra/secureStorage';
+import { XContainer } from '@x/global/components/styled/Container';
+import { generateNewMnemonic } from '../../../infra/helpers';
+import { type AppDispatch, type RootState } from '@x/global/state/store';
+import { XActivityIndicator } from '@/global/components/X/XActiveIndicator';
+import { Routes } from '@/global/navigation/RouteNames';
+import { PHRASE_KEY } from '../constants';
+import { useNavigation } from '@react-navigation/native';
+import XLogo from '@/domain/authorizations/components/XLogo';
+import { useXWalletHelper } from '../hooks/useXWalletHelper';
+
+export function Wallet(): JSX.Element {
+  const navigation = useNavigation();
+  const loading = useSelector((state: RootState) => state.x.loading);
+  const { setLocalLoading } = useXWalletHelper();
+  const dispatch = useDispatch<AppDispatch>();
+
+  const generateMnemonic = async () => {
+    setLocalLoading();
+    try {
+      const phrase = await generateNewMnemonic();
+      await saveValue(PHRASE_KEY, phrase);
+      await removeValue('password');
+      dispatch(generatePhrase(phrase));
+      dispatch(setUpWallet({ phrase }));
+      setLocalLoading();
+      navigation.navigate(Routes.DEFINE_PASSWORD as never);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  return (
+    <XContainer>
+      {!loading ? (
+        <View style={styles.walletContainer}>
+          <XLogo />
+          <XButton onPress={generateMnemonic} title="Generate new seed phrase" icon="wallet" />
+          <XButton icon="import" onPress={() => navigation.navigate(Routes.IMPORT_MNEMONIC as never)} title="Import existing seed phrase" />
+        </View>
+      ) : (
+        <XActivityIndicator />
+      )}
+    </XContainer>
+  );
+}
+
+const styles = StyleSheet.create({
+  walletContainer: { marginHorizontal: 50, gap: 20 },
+});
+````
+
+🔑 **Key Features of X-Wallet**
+
+- **Token Distribution**: Bulk sending of native and ERC20 tokens with optimized gas fees.
+- **Wallet Management**: Create, import, and export wallets using BIP-39 mnemonics.
+- **Network Switching**: Support for various networks including testnets.
+- **User Interface**: Balance display, QR code address sharing, and transaction history.
+- **Security**: Password-protected access, enhanced gas settings, and token swapping.
+
+---
+
+### 🔗 Accessing Full Source Code
+For the complete implementation of X-Wallet with advanced features, you can explore [CodeCrayon](https://codecanyon.net/item/xwallet-an-airdrop-ethereum-wallet/50663324)
+
+This guide provides a foundation for building your own Ethereum wallet app. Happy coding! 🚀
+
+
+
+### 🌟 Useful Tools for Blockchain Users
+
+- **[X-Wallet: An Airdrop Ethereum Wallet](https://codecanyon.net/item/xwallet-an-airdrop-ethereum-wallet/50663324)**  
+- **[Bulk Sender for Ethereum](https://bulksendtokens.xyz/)**  
+- **[Free Bulk Sender for Solana](https://solana.bulksendtokens.xyz/)**  
+
+---

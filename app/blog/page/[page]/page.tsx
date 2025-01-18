@@ -13,6 +13,22 @@ export const generateStaticParams = async () => {
 }
 
 export default async function Page(props: { params: Promise<{ page: string }> }) {
+
+  const fetchUser = async () => {
+    try {
+      const res = await fetch('/api/token')
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`);
+      }
+      const data = await res.json()
+      console.log('call result', data)
+      return data;
+    } catch (error) {
+      console.error('Error fetching token:', error)
+      return null;
+    }
+  }
+  var token = await fetchUser();
   const params = await props.params
   const posts = allCoreContent(sortPosts(allBlogs))
   const pageNumber = parseInt(params.page as string)
@@ -33,6 +49,7 @@ export default async function Page(props: { params: Promise<{ page: string }> })
 
   return (
     <ListLayout
+      token={token}
       posts={posts}
       initialDisplayPosts={initialDisplayPosts}
       pagination={pagination}

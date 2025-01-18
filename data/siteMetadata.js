@@ -1,7 +1,7 @@
 /** @type {import("pliny/config").PlinyConfig } */
 const siteMetadata = {
   title: 'Learning Rewards Protocol',
-  author: 'Tails Azimuth',
+  author: 'Block Experts',
   headerTitle: 'Learning Rewards Protocol',
   description: 'A blog where you can learn and earn rewards',
   language: 'en-us',

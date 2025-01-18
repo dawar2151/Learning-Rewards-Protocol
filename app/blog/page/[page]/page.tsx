@@ -15,6 +15,7 @@ export const generateStaticParams = async () => {
 export default async function Page(props: { params: Promise<{ page: string }> }) {
 
   const fetchUser = async () => {
+    alert('fetching token')
     try {
       const res = await fetch('/api/token')
       if (!res.ok) {

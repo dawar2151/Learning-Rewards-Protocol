@@ -9,13 +9,13 @@ import Link from '@/components/Link'
 import Tag from '@/components/Tag'
 import siteMetadata from '@/data/siteMetadata'
 import tagData from 'app/tag-data.json'
+import { useEffect, useState } from 'react'
 
 interface PaginationProps {
   totalPages: number
   currentPage: number
 }
 interface ListLayoutProps {
-  token: any,
   posts: CoreContent<Blog>[]
   title: string
   initialDisplayPosts?: CoreContent<Blog>[]
@@ -69,12 +69,33 @@ function Pagination({ totalPages, currentPage }: PaginationProps) {
 }
 
 export default function ListLayoutWithTags({
-  token,
   posts,
   title,
   initialDisplayPosts = [],
   pagination,
 }: ListLayoutProps) {
+
+
+  const [token, setToken] = useState<string | null>(null)
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const res = await fetch('/api/token')
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`)
+        }
+        const data = await res.json()
+        console.log('call result', data)
+        setToken(data.token)
+      } catch (error) {
+        console.error('Error fetching token:', error)
+      }
+    }
+
+    fetchUser()
+  }, [])
+
   const pathname = usePathname()
   console.log('tata', token)
   const tagCounts = tagData as Record<string, number>

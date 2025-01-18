@@ -10,6 +10,8 @@ import Tag from '@/components/Tag'
 import siteMetadata from '@/data/siteMetadata'
 import tagData from 'app/tag-data.json'
 import { useEffect, useState } from 'react'
+import { useAccount } from 'wagmi'
+
 
 interface PaginationProps {
   totalPages: number
@@ -77,23 +79,33 @@ export default function ListLayoutWithTags({
 
 
   const [token, setToken] = useState<string | null>(null)
+  const { address } = useAccount()
 
   useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const res = await fetch('/api/token')
-        if (!res.ok) {
-          throw new Error(`HTTP error! status: ${res.status}`)
+    const sendRewards = async () => {
+
+
+        try {
+          const res = await fetch('/api/token', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ address }),
+          })
+          if (!res.ok) {
+            throw new Error(`HTTP error! status: ${res.status}`)
+          }
+          const data = await res.json()
+          console.log('call result', data)
+          setToken(data.token)
+        } catch (error) {
+          console.error('Error fetching token:', error)
         }
-        const data = await res.json()
-        console.log('call result', data)
-        setToken(data.token)
-      } catch (error) {
-        console.error('Error fetching token:', error)
-      }
+      
     }
 
-    fetchUser()
+    sendRewards()
   }, [])
 
   const pathname = usePathname()

@@ -10,7 +10,7 @@ const UserRewards = () => {
   return (
     <div className="flex flex-col items-center justify-center bg-gray-100">
       <div className="bg-white shadow-md rounded-lg p-6 w-full max-h-90">
-        <h2 className="text-2xl font-semibold text-gray-800 mb-4">Your Earning of Growth Balance</h2>
+        <h2 className="text-2xl font-semibold text-gray-800 mb-4">Your Earning of Growth Token</h2>
         {data.isLoading ? (
           <p className="text-xl text-gray-600">Loading balance...</p>
         ) : data.isError ? (

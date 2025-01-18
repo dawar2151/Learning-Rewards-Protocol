@@ -130,7 +130,7 @@ This project is licensed under the [MIT License](LICENSE).
 
 ## Contact
 
-For questions, feedback, or issues, please open an [issue](https://github.com/your-username/Learning-Rewards-Protocol/issues) or reach out at your-email@example.com.
+For questions, feedback, or issues, please open an [issue](https://github.com/your-username/Learning-Rewards-Protocol/issues) or reach out at iblockchain20ez@gmail.com.
 
 ---
 

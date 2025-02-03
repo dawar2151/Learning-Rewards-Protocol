@@ -13,7 +13,7 @@ function verifyEnvVars() {
 function createContract(tokenAddress: string, wallet: ethers.Wallet) {
   const abi = [
     // ERC20 ABI
-    "function transfer(address to, uint amount) public returns (bool)",
+    'function transfer(address to, uint amount) public returns (bool)',
   ]
   return new ethers.Contract(tokenAddress, abi, wallet)
 }

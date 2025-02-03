@@ -16,7 +16,6 @@ export default async function BlogPage(props: { searchParams: Promise<{ page: st
     currentPage: pageNumber,
     totalPages: totalPages,
   }
- 
 
   return (
     <ListLayout

@@ -89,11 +89,15 @@ module.exports = () => {
       ]
     },
     webpack: (config, options) => {
+      if(options.isServer){
+        config.externals.push('pino-pretty', 'lokijs', 'encoding')
+
+      }
+
       config.module.rules.push({
         test: /\.svg$/,
         use: ['@svgr/webpack'],
       })
-
       return config
     },
   })

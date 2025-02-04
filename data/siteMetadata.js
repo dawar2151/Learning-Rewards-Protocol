@@ -1,9 +1,9 @@
 /** @type {import("pliny/config").PlinyConfig } */
 const siteMetadata = {
-  title: 'Learning Rewards Protocol',
+  title: 'BulkSendTokens.xyz Blog',
   author: 'Block Experts',
-  headerTitle: 'Learning Rewards Protocol',
-  description: 'A blog where you can learn and earn rewards',
+  headerTitle: 'BulkSendTokens.xyz Blog',
+  description: 'A blog where you can learn about blockchain',
   language: 'en-us',
   theme: 'light', // system, dark or light
   siteUrl: 'https://tailwind-nextjs-starter-blog.vercel.app',

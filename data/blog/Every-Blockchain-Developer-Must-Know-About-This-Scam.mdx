@@ -1,0 +1,86 @@
+---
+title: data/blog/Smart-Contract-Safety:-How-to-Verify-Before-You-Interact.mdx
+date: '2025-02-02'
+tags: ['blockchain', 'code', 'features']
+draft: false
+summary: 
+---
+
+
+
+# 🚨 Warning for Freelance Blockchain Developers: Beware of a New Scam!  
+
+Freelance developers, especially those working on blockchain and cryptocurrency projects, need to be vigilant about a new scam spreading across popular freelancing platforms. This scam involves a malicious Node.js script that scans a user’s storage and **exfiltrates sensitive data**, including browser wallet caches from extensions like **Phantom** and **MetaMask**.
+
+I got this offers personally from Linkedin and Freelancer.com
+
+---
+
+## 🛑 **How the Scam Works**  
+
+1. **Fake Job Offer:**  
+   - The scam begins when a "client" contacts a developer on platforms like **LinkedIn**, **Upwork**, or **Fiverr** with a seemingly legitimate job offer.  
+   
+2. **Malicious Code Delivery:**  
+   - After some discussions, the scammer provides a **JavaScript** or **Node.js** script for the developer to integrate into their project.  
+   
+3. **Hidden Malicious Payload:**  
+   - The script contains hidden code that:  
+     - **Scans Local Storage:** Looks for files or caches from browser wallet extensions like **Phantom** and **MetaMask**.  
+     - **Extracts Sensitive Data:** Gathers private keys, wallet addresses, or other critical information.  
+     - **Exfiltrates the Data:** Sends the stolen information to a remote server controlled by the scammer.  
+
+---
+
+## 💥 **The Impact**  
+
+This scam is particularly dangerous because it targets developers who often work with **sensitive financial data**. By compromising a developer’s local environment, the scammer gains access to:  
+- Cryptocurrency wallets.  
+- Login credentials.  
+- Other critical information stored on the system.  
+
+For developers using browser wallet extensions like **Phantom** and **MetaMask**, the consequences can be severe. Losing access to these wallets often results in substantial financial losses.  
+
+---
+
+## 🛡️ **How to Protect Yourself**  
+
+Take these precautions to avoid falling victim to this scam:  
+
+1. **Thoroughly Review Client Requests:**  
+   - Scrutinize any code provided by clients, especially if it accesses or manipulates local storage.  
+   - If you don’t fully understand the code, seek advice from peers or use online resources to verify its legitimacy.  
+
+2. **Use Sandboxed Environments:**  
+   - Run untrusted code in a **sandboxed environment** or a **virtual machine** to prevent it from accessing your main system’s storage.  
+
+3. **Implement Security Best Practices:**  
+   - Stay informed about the latest security threats targeting developers by following cybersecurity blogs, forums, and news outlets.  
+
+---
+
+## 📊 **What the Hacker Gets**  
+
+Here’s an example of the kind of data a hacker can extract:  
+
+![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/r202f27qxrxmf8saxltc.png)  
+
+In the folder Metamask for example in image above, you’ll find a file named 000005.ldb or something similar. The exact number may vary, but it should be a low numerical value, such as 000004 or 000005. If the number is significantly higher, it is not the vault.
+
+The hacker could decrypt that file if you’re not using a strong encryption password, potentially gaining access to your seed phrase—and as a result, you could lose your funds.
+
+## 🔒 **Conclusion**  
+
+**Do not run untrusted scripts on your main OS.** Always use a **virtual machine** or **Docker container** with limited permissions to test potentially malicious code.  
+
+By staying vigilant and adopting secure practices, you can safeguard yourself and your projects from these scams. Stay safe! 🚀
+
+
+---
+
+### 🌟 Useful Tools for Blockchain Developers  
+- **[X-Wallet: An Airdrop Ethereum Wallet](https://codecanyon.net/item/xwallet-an-airdrop-ethereum-wallet/50663324)**  
+- **[Bulk Sender for Ethereum](https://bulksendtokens.xyz/)**  
+- **[Free Bulk Sender for Solana](https://solana.bulksendtokens.xyz/)**  
+
+---

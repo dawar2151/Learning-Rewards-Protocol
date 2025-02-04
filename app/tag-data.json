@@ -1,10 +1,10 @@
 {
+  "blockchain": 3,
+  "code": 2,
+  "features": 2,
   "ethereum": 1,
   "wallet": 1,
   "web3": 1,
-  "blockchain": 2,
-  "code": 1,
-  "features": 1,
   "multi-author": 1,
   "feature": 1
 }

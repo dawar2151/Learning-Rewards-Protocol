@@ -3,7 +3,7 @@ title: How to build ethereum wallet?
 date: '2025-01-15'
 tags: ['ethereum', 'wallet', 'web3']
 draft: false
-summary: 'Building an Ethereum Wallet App with Expo and TypeScript.'
+summary: Building an Ethereum Wallet App with Expo and TypeScript.
 ---
 
 ## Building an Ethereum Wallet App with Expo and TypeScript
@@ -18,6 +18,7 @@ Ethereum wallets serve as gateways to interact with the Ethereum blockchain, all
 - **Cold Wallets**: Physical or hardware wallets (like Ledger or Trezor) provide enhanced security since they are not connected to the internet when not in use.
 
 ### Key Concepts:
+
 - **Private Key**: Used to sign transactions and prove ownership of cryptocurrencies.
 - **Public Key**: Generated from the private key, used for receiving ETH.
 - **Address**: Derived from the public key, an address where ETH can be sent.
@@ -25,6 +26,7 @@ Ethereum wallets serve as gateways to interact with the Ethereum blockchain, all
 ## 🛠 Prerequisites and Setup
 
 ### Software Requirements:
+
 - **Node.js**: Installed on your development machine.
 - **Expo CLI**: Install globally via `npm install -g expo-cli`.
 - **React Native**: Familiarity is beneficial, though not mandatory for this guide.
@@ -50,25 +52,25 @@ expo start
 Create WalletService.ts for handling wallet operations:
 
 ```typescript
-import 'react-native-get-random-values';
-import '@ethersproject/shims';
-import { Wallet, JsonRpcProvider, Contract, BigNumberish } from 'ethers';
-import { hdkey } from 'ethereumjs-wallet';
-import Bip39 from '@dawar2151/bip39-expo';
-import { ERC20_ABI, PATH_DERIVE } from '@x/global/config/constants'; // Assuming these constants exist
-import { NETWORKS, ANKR_KEY, INFURA_SECRET } from '@/global/constants'; // Assuming these are defined elsewhere
-import { type Token } from '@/domain/tickers/models/token'; // Assuming this type is defined
-import { type Network } from '@/global/types.constants'; // Assuming this type is defined
+import 'react-native-get-random-values'
+import '@ethersproject/shims'
+import { Wallet, JsonRpcProvider, Contract, BigNumberish } from 'ethers'
+import { hdkey } from 'ethereumjs-wallet'
+import Bip39 from '@dawar2151/bip39-expo'
+import { ERC20_ABI, PATH_DERIVE } from '@x/global/config/constants' // Assuming these constants exist
+import { NETWORKS, ANKR_KEY, INFURA_SECRET } from '@/global/constants' // Assuming these are defined elsewhere
+import { type Token } from '@/domain/tickers/models/token' // Assuming this type is defined
+import { type Network } from '@/global/types.constants' // Assuming this type is defined
 
 // Generate a new mnemonic
-export const generateNewMnemonic = async (): Promise<string> => Bip39.generateMnemonic();
+export const generateNewMnemonic = async (): Promise<string> => Bip39.generateMnemonic()
 
 // Derive wallet from mnemonic
 export async function getWallet(phrase: string, currentNetwork: Network): Promise<Wallet> {
-  const seed = await Bip39.mnemonicToSeed(phrase);
-  const hdwallet = hdkey.fromMasterSeed(seed);
-  const wallet = hdwallet.derivePath(PATH_DERIVE).getWallet();
-  return new Wallet(wallet.getPrivateKeyString(), getProvider(currentNetwork));
+  const seed = await Bip39.mnemonicToSeed(phrase)
+  const hdwallet = hdkey.fromMasterSeed(seed)
+  const wallet = hdwallet.derivePath(PATH_DERIVE).getWallet()
+  return new Wallet(wallet.getPrivateKeyString(), getProvider(currentNetwork))
 }
 
 // Fetch native token balance
@@ -76,9 +78,9 @@ export const getNativeTokenBalance = async (
   currentNetwork: Network,
   account: string
 ): Promise<BigNumberish> => {
-  const provider = getProvider(currentNetwork);
-  return provider.getBalance(account);
-};
+  const provider = getProvider(currentNetwork)
+  return provider.getBalance(account)
+}
 
 // Fetch ERC20 token balance
 export const getTokenBalance = async (
@@ -86,20 +88,20 @@ export const getTokenBalance = async (
   tokenAddress: string,
   account: string
 ): Promise<BigNumberish> => {
-  const provider = getProvider(currentNetwork);
-  const contract = new Contract(tokenAddress, ERC20_ABI, provider);
-  return contract.balanceOf(account);
-};
+  const provider = getProvider(currentNetwork)
+  const contract = new Contract(tokenAddress, ERC20_ABI, provider)
+  return contract.balanceOf(account)
+}
 
 // Select provider based on network
 export function getProvider(currentNetwork: Network = 'sepolia'): JsonRpcProvider {
   switch (currentNetwork) {
     case NETWORKS.bsc:
-      return new JsonRpcProvider(`https://rpc.ankr.com/bsc/${ANKR_KEY}`);
+      return new JsonRpcProvider(`https://rpc.ankr.com/bsc/${ANKR_KEY}`)
     case NETWORKS.base:
-      return new JsonRpcProvider(`https://rpc.ankr.com/base/${ANKR_KEY}`);
+      return new JsonRpcProvider(`https://rpc.ankr.com/base/${ANKR_KEY}`)
     default:
-      return new JsonRpcProvider(`https://${currentNetwork}.infura.io/v3/${INFURA_SECRET}`);
+      return new JsonRpcProvider(`https://${currentNetwork}.infura.io/v3/${INFURA_SECRET}`)
   }
 }
 
@@ -110,14 +112,15 @@ export async function getBalance(
   currentNetwork: Network,
   currentAddress: string
 ): Promise<BigNumberish> {
-  const token = supportedTokens[tokenId];
+  const token = supportedTokens[tokenId]
   if (token.isNative) {
-    return getNativeTokenBalance(currentNetwork, currentAddress);
+    return getNativeTokenBalance(currentNetwork, currentAddress)
   } else {
-    return getTokenBalance(currentNetwork, token.address, currentAddress);
+    return getTokenBalance(currentNetwork, token.address, currentAddress)
   }
 }
 ```
+
 📲 Step 3: Crafting the User Interface
 Update Wallet.tsx for basic wallet functionalities:
 
@@ -177,7 +180,7 @@ export function Wallet(): JSX.Element {
 const styles = StyleSheet.create({
   walletContainer: { marginHorizontal: 50, gap: 20 },
 });
-````
+```
 
 🔑 **Key Features of X-Wallet**
 
@@ -190,16 +193,15 @@ const styles = StyleSheet.create({
 ---
 
 ### 🔗 Accessing Full Source Code
+
 For the complete implementation of X-Wallet with advanced features, you can explore [CodeCrayon](https://codecanyon.net/item/xwallet-an-airdrop-ethereum-wallet/50663324)
 
 This guide provides a foundation for building your own Ethereum wallet app. Happy coding! 🚀
 
-
-
 ### 🌟 Useful Tools for Blockchain Users
 
-- **[X-Wallet: An Airdrop Ethereum Wallet](https://codecanyon.net/item/xwallet-an-airdrop-ethereum-wallet/50663324)**  
-- **[Bulk Sender for Ethereum](https://bulksendtokens.xyz/)**  
-- **[Free Bulk Sender for Solana](https://solana.bulksendtokens.xyz/)**  
+- **[X-Wallet: An Airdrop Ethereum Wallet](https://codecanyon.net/item/xwallet-an-airdrop-ethereum-wallet/50663324)**
+- **[Bulk Sender for Ethereum](https://bulksendtokens.xyz/)**
+- **[Free Bulk Sender for Solana](https://solana.bulksendtokens.xyz/)**
 
 ---

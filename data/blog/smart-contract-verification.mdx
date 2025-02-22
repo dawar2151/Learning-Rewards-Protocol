@@ -1,0 +1,191 @@
+---
+title: Smart Contract Verification on Etherscan via API, A Step-by-Step Guide?
+date: '2025-02-22'
+tags: ['blockchain', 'code', 'features']
+draft: false
+summary:
+---
+
+## Smart Contract Verification on Etherscan: A Step-by-Step Guide
+
+Verifying your smart contracts on Etherscan, Bscan, Polyscan, or any EVM-compatible blockchain is crucial for building trust and transparency, especially in the financial transactions. Recently, a customer requested the ability to verify smart contracts on Etherscan when creating ERC20, ERC721, or ERC1155 tokens via [BulkSendTokens.xyz](https://bulksendtokens.xyz/create-token).
+
+![Customer question](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/vgey3ddvfh9z63uex5fo.png)
+
+I agreed that this was a great idea and decided to implement it.
+
+In this guide, I'll walk you through the process of verifying a smart contract on Etherscan using Hardhat and a custom TypeScript class.
+
+Here is architecture of the smart contracts project:
+
+![ERC20 Token](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/8xta569sl8zd968kcv4c.png)
+
+---
+
+## Step 1: Compile Your Smart Contract
+
+Let's assume you've built your ERC20 token using Hardhat. To verify it, you'll need the **Solidity Standard JSON Input** file generated during compilation.
+
+Run the following command to compile your contract:
+
+```bash
+npx hardhat compile
+```
+
+After compilation, locate the JSON input file in the `artifacts` folder. This file contains the metadata required for verification.
+
+## ![How to get Solidity Standard JSON Input?](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/edrq05zx0z6docffz1uz.png)
+
+## Step 2: Create the Etherscan Verifier Class
+
+Create a TypeScript class (`etherscan.ts`) to handle the verification process. This class will use the Etherscan API to submit the contract for verification.
+
+```typescript
+import axios, { AxiosResponse } from 'axios'
+import FormData from 'form-data'
+import { ethers } from 'ethers'
+
+export class EtherscanVerifier {
+  private apiKey: string
+  private apiUrl: string
+
+  constructor(apiKey: string, apiUrl: string) {
+    this.apiKey = apiKey
+    this.apiUrl = apiUrl
+  }
+
+  /**
+   * ABI-encodes constructor arguments
+   * @param abi - Contract ABI (Application Binary Interface)
+   * @param constructorArgs - Array of constructor arguments
+   * @returns ABI-encoded constructor arguments
+   */
+  private encodeConstructorArgs(abi: any[], constructorArgs: any[]): string {
+    const iface = new ethers.Interface(abi)
+    return iface.encodeDeploy(constructorArgs).slice(2) // Remove "0x" prefix
+  }
+
+  /**
+   * Verifies a smart contract on Etherscan
+   * @param chainId - Chain ID of the network (e.g., 1 for Ethereum Mainnet, 11155111 for Sepolia)
+   * @param contractAddress - Address of the deployed contract
+   * @param sourceCode - Source code of the contract in Standard JSON Input format
+   * @param contractName - Name of the contract (e.g., "contracts/tokens/ERC20.sol:ERC20Token")
+   * @param compilerVersion - Version of the Solidity compiler used (e.g., "v0.8.26+commit.8a97fa7a")
+   * @param abi - ABI of the contract
+   * @param constructorArgs - Constructor arguments (if any)
+   * @param optimizationUsed - Whether optimization was used during compilation (default: true)
+   * @param runs - Number of optimization runs (default: 200)
+   */
+  public async verifyContract(
+    chainId: number,
+    contractAddress: string,
+    sourceCode: string,
+    contractName: string,
+    compilerVersion: string,
+    abi: any[],
+    constructorArgs: any[] = [],
+    optimizationUsed: boolean = true,
+    runs: number = 200
+  ): Promise<void> {
+    console.log('Verifying contract...')
+
+    // Encode constructor arguments if any
+    const encodedConstructorArgs =
+      constructorArgs.length > 0 ? this.encodeConstructorArgs(abi, constructorArgs) : ''
+
+    const formData = new FormData()
+    formData.append('chainId', chainId)
+    formData.append('codeformat', 'solidity-standard-json-input')
+    formData.append('sourceCode', sourceCode) // Standard JSON Input
+    formData.append('constructorArguments', encodedConstructorArgs)
+    formData.append('contractaddress', contractAddress)
+    formData.append('contractname', contractName)
+    formData.append('compilerversion', compilerVersion)
+    formData.append('optimizationUsed', optimizationUsed ? '1' : '0')
+    formData.append('runs', runs.toString())
+
+    try {
+      const response = await axios.post(
+        `${this.apiUrl}?module=contract&action=verifysourcecode&apikey=${this.apiKey}`,
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      )
+      console.log('Verification Response:', response.data)
+    } catch (error) {
+      console.error('Error verifying contract:', error)
+    }
+  }
+}
+```
+
+---
+
+## Step 3: Call the Verification API
+
+Once the `EtherscanVerifier` class is set up, you can use it to verify your contract. Here's an example of how to call the API:
+
+```typescript
+const verifier = new EtherscanVerifier(
+  process.env.NEXT_PUBLIC_ETHERSCAN_API, // Your Etherscan API Key
+  'https://api-sepolia.etherscan.io/api' // Etherscan API URL (Sepolia Testnet)
+)
+
+var result = await verifier.verifyContract(
+  chainId, // Chain ID (e.g., 11155111 for Sepolia)
+  address, // Deployed contract address
+  JSON.stringify(ERC20.content), // Standard JSON Input
+  'contracts/tokens/ERC20.sol:ERC20Token', // Contract name
+  'v0.8.26+commit.8a97fa7a', // Compiler version
+  [...ERC20.abi], // Contract ABI
+  [tokenName, tokenSymbol, tokenDecimals, totalSupply] // Constructor arguments
+)
+```
+
+you will get a `data` in result with the following details:
+
+```json
+{
+message: "OK"
+result: "67cjtm6ptdsrikyef35bcg6pkjezzgnh5eurhckwpfmtyqjepb"
+status: "1"
+}
+```
+
+you can check the verification status on:
+
+## https://api.etherscan.io/api?module=contract&action=checkverifystatus&guid=67cjtm6ptdsrikyef35bcg6pkjezzgnh5eurhckwpfmtyqjepb&apikey=YOUR_ETHERSCAN_API_KEY
+
+You should get:
+
+![Verification result](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/ol58tnkm4i9j24y7fouo.png)
+
+## Documentation for API Parameters
+
+Below is a breakdown of the parameters used in the Etherscan API request, as documented in the [Etherscan API Documentation](https://docs.etherscan.io/api-endpoints/contracts#check-source-code-verification-submission-status):
+
+| Parameter              | Description                                                                    |
+| ---------------------- | ------------------------------------------------------------------------------ |
+| `chainId`              | Chain ID of the network (e.g., 1 for Ethereum Mainnet, 11155111 for Sepolia)   |
+| `codeformat`           | Format of the source code (`solidity-standard-json-input` for JSON input)      |
+| `sourceCode`           | Source code of the contract in Standard JSON Input format                      |
+| `constructorArguments` | ABI-encoded constructor arguments (if any)                                     |
+| `contractaddress`      | Address of the deployed contract                                               |
+| `contractname`         | Name of the contract (e.g., `contracts/tokens/ERC20.sol:ERC20Token`)           |
+| `compilerversion`      | Version of the Solidity compiler used                                          |
+| `optimizationUsed`     | Whether optimization was used during compilation (`1` for true, `0` for false) |
+| `runs`                 | Number of optimization runs (default: 200)                                     |
+
+---
+
+## Conclusion
+
+By following this guide, you can easily verify your smart contracts on Etherscan or any EVM-compatible blockchain. This process not only enhances transparency but also builds trust with your users. Whether you're deploying ERC20, ERC721, or ERC1155 tokens, verification is a critical step in ensuring the integrity of your smart contracts.
+
+Feel free to integrate this functionality into your projects and share your feedback! If you have any questions, drop them in the comments below.
+
+Happy coding! 🚀

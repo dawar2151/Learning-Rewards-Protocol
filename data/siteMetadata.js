@@ -6,7 +6,7 @@ const siteMetadata = {
   description: 'A blog where you can learn about blockchain',
   language: 'en-us',
   theme: 'light', // system, dark or light
-  siteUrl: 'https://blog.bulksendtokens.xyz/',
+  siteUrl: 'https://blog.bulksendtokens.xyz',
   siteRepo: 'https://github.com/dawar2151',
   siteLogo: `${process.env.BASE_PATH || ''}/static/images/logo.png`,
   socialBanner: `${process.env.BASE_PATH || ''}/static/images/twitter-card.png`,

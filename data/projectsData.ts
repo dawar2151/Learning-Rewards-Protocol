@@ -10,7 +10,7 @@ const projectsData: Project[] = [
     title: 'A Token Bulk Sender',
     description: `A tool that allow users to bulk send tokens in few minutes with low fees.`,
     imgSrc: '/static/images/token-bulk-sender-1.png',
-    href: 'https://www.bulksendtokenz.xyz',
+    href: 'https://www.bulksendtokens.xyz',
   },
   {
     title: 'Ethereum Wallet',

@@ -1,10 +1,11 @@
 {
+  "ethereum": 3,
+  "wallet": 4,
+  "web3": 4,
   "blockchain": 5,
   "code": 4,
   "features": 4,
-  "ethereum": 2,
-  "wallet": 2,
-  "web3": 2,
+  "solana": 1,
   "multi-author": 1,
   "feature": 1
 }

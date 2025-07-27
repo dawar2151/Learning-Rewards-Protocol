@@ -15,7 +15,7 @@ const siteMetadata = {
   github: 'https://github.com',
   x: 'https://twitter.com/theblockexperts',
   // twitter: 'https://twitter.com/Twitter',
-  facebook: 'https://facebook.com/iblockchain',
+  facebook: 'https://facebook.com/SmartDevelopersSkills',
   youtube: 'https://youtube.com/@blockexperts',
   linkedin: 'https://www.linkedin.com',
   threads: 'https://www.threads.net',

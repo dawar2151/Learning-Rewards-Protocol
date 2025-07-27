@@ -1,0 +1,103 @@
+---
+title: How do some dApps pretend to have verified contracts when they don't?
+date: '2025-07-27'
+tags: ['blockchain', 'etherscan', 'proxy', 'upgradable smart contracts']
+draft: false
+summary:
+---
+
+Recently, I started interacting with many DApps for DeFi, airdrops, or NFT exchanges. I noticed that most of the time, DApps are marked as **"contract verified"**, but in many cases, **only the proxy contract is verified—not the implementation**.
+
+What does that actually mean? And is the contract truly verified in such cases?
+
+Let’s break it down below.
+
+let's start with some context:
+
+The concept of **upgradable smart contracts** on Ethereum began emerging around 2017, with more formal and secure patterns being adopted by 2018.
+
+Many decentralized applications (DApps) started using this pattern to prevent and mitigate vulnerabilities that could appear in the future.
+
+## What Are Upgradable Smart Contracts?
+
+**Upgradable smart contracts** follow a simple architecture:
+
+- A **proxy contract** holds the data (storage)
+- An **implementation contract** contains the business logic
+
+When you deploy the proxy, it stays fixed. However, you can **upgrade** the implementation contract at any time—**without changing the proxy address** or notifying users. This makes upgrades seamless, but also **potentially dangerous**: a malicious owner could swap in harmful logic without anyone noticing.
+
+![Proxy and implementation diagram](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/z96qgmbacmr49f2yerfw.png)
+
+As shown above, users always interact with the proxy. This proxy stores both the data and the reference to the implementation address.
+
+The issue is: **most users only check if the proxy is verified**, and ignore the implementation. This gives a **false sense of security**, as the real logic could be unverified or even malicious.
+
+---
+
+## Real-World Examples
+
+I checked several popular token tools. Most of them only verify the **proxy** but not the **implementation** contract.
+
+### [BulkSender.app](https://bulksender.app)
+
+The proxy contract is verified, but the implementation is **not**:
+
+![Etherescan bulksender.app](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/txxa6wu5ewmclojsefvo.png)
+
+---
+
+### [CryptoSender.com](https://cryptosender.com)
+
+Same story: the proxy is verified, the implementation is **not**.
+
+![Etherscan CryptoSender.com](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/3ca7gg1r2o3vml0hdp6q.png)
+
+---
+
+### [BulkSendTokens.xyz](https://bulksendtokens.xyz)
+
+✅ In this case, **both the proxy and implementation are verified**, which is how it should be:
+
+
+![Etherscan BULKSENDTOKENS.XYZ](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/bwspei9wapee2d65fjfb.png)
+
+---
+
+## Why This Matters
+
+When the implementation contract is unverified, users **can't see what logic is being executed**. That means:
+
+- Hidden service fees could be added
+- Backdoors might exist
+- Logic could be changed at any time
+
+If both contracts are verified, everything becomes transparent: you can inspect the code, see the upgrade logic, and ensure there's no malicious behavior.
+
+---
+
+## ✅ Stay Safe
+
+- Always check **both proxy and implementation** contracts are verified
+- Don’t trust a verified proxy alone—it holds **no logic**
+- Be cautious with tools that don’t verify everything
+
+---
+
+## Follow My Work
+
+I'm building secure tools in the blockchain space—follow me for updates:
+
+🐦 **X (Twitter):** [@TheBlockExperts](https://x.com/TheBlockExperts)
+
+---
+
+## 🛠️ Blockchain Developer Tools I Built
+
+-  [**X-Wallet: An Airdrop & Asset Management Ethereum Wallet**](https://codecanyon.net/item/xwallet-an-airdrop-ethereum-wallet/50663324)  
+-  [**Bulk Sender for Ethereum**](https://bulksendtokens.xyz/)  
+-  [**Bulk Sender for Solana**](https://solana.bulksendtokens.xyz/)
+
+---
+
+Stay safe out there 👊

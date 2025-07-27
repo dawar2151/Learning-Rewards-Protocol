@@ -2,9 +2,12 @@
   "ethereum": 3,
   "wallet": 4,
   "web3": 4,
-  "blockchain": 5,
+  "blockchain": 6,
   "code": 4,
   "features": 4,
+  "etherscan": 1,
+  "proxy": 1,
+  "upgradable-smart-contracts": 1,
   "solana": 1,
   "multi-author": 1,
   "feature": 1

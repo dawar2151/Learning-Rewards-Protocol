@@ -1,14 +1,15 @@
 {
+  "ethereum": 4,
+  "wallet": 5,
+  "web3": 5,
   "blockchain": 6,
+  "code": 4,
+  "features": 4,
   "etherscan": 1,
   "proxy": 1,
   "upgradable-smart-contracts": 1,
-  "solana": 1,
-  "wallet": 4,
-  "web3": 4,
-  "ethereum": 3,
-  "code": 4,
-  "features": 4,
+  "solana": 2,
+  "bulksendtokens": 1,
   "multi-author": 1,
   "feature": 1
 }
